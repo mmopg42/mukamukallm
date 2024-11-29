@@ -5,8 +5,6 @@ from trl import SFTTrainer
 from transformers import TrainingArguments
 from unsloth import is_bfloat16_supported
 
-import argparse
-
 ######################
 ######## 변수 ########
 ######################
