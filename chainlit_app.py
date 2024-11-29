@@ -30,3 +30,6 @@ async def main(message: str):
         import traceback
         traceback.print_exc()
         await cl.Message(content=f"오류 발생: {str(e)}").send()
+
+# 실행 커맨드
+# chainlit run chainlit_app.py
