@@ -10,6 +10,8 @@ from pydantic import BaseModel
 from collections import deque
 import torch
 
+# 실행 커맨드
+# uvicorn infer:app --host 127.0.0.1 --port 8000
 
 ###########################
 ######### 변수선언 #########

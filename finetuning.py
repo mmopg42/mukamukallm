@@ -5,9 +5,6 @@ from trl import SFTTrainer
 from transformers import TrainingArguments
 from unsloth import is_bfloat16_supported
 
-import argparse
-
-
 ######################
 ######## 변수 ########
 ######################
@@ -16,6 +13,7 @@ data_directory = 'mukamukallm/data'
 output_dir = 'mukamukallm/model'
 
 
+# 데이터를 포맷팅합니다
 def formatting_data(input):
     prompt_format = """상황: 
 {}
@@ -35,6 +33,7 @@ def formatting_data(input):
     return {"text": texts}
 
 
+# 학습 코드드
 def train():
     
     model, tokenizer = FastLanguageModel.from_pretrained(
