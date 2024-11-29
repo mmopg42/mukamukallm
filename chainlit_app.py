@@ -1,6 +1,9 @@
 import chainlit as cl
 import httpx
 
+# 실행 커맨드
+# chainlit run chainlit_app.py
+
 FASTAPI_SERVER_URL = "https://kxxafcpgwrccxezh.tunnel-pt.elice.io/proxy/8000/generate"
 # FASTAPI_SERVER_URL = "http://127.0.0.1:8000
 
@@ -31,5 +34,3 @@ async def main(message: str):
         traceback.print_exc()
         await cl.Message(content=f"오류 발생: {str(e)}").send()
 
-# 실행 커맨드
-# chainlit run chainlit_app.py
