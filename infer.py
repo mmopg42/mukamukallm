@@ -19,7 +19,6 @@ import torch
 app = FastAPI()
 conversation_history = deque(maxlen=10)
 
-# Configurable Parameters
 txt_directory_path = "mukamukallm/docs"
 # local_model_path = "mukamukallm/model/checkpoint-120"
 local_model_path = 'mmopg42/mukamukallm_check120_data73'
@@ -31,7 +30,6 @@ max_seq_length = 2048
 ###########################
 
 def load_documents(directory: str):
-    """Load all text documents from a directory."""
     all_documents = []
 
     for filename in os.listdir(directory):
@@ -51,7 +49,6 @@ def initialize_embedding_model(model_name: str):
 
 def create_vector_store(documents, embedding_model):
     vector_store = FAISS.from_documents(documents, embedding_model)
-    print("Vector store created using FAISS")
     return vector_store
 
 
@@ -92,14 +89,11 @@ def generate_prompt(context: str, input_message: str, conversation_history):
 ###########################
 print("Initializing the model and vector store...")
 
-# Load and preprocess documents
 documents = load_documents(txt_directory_path)
 
-# Initialize embeddings and vector store
 embedding_model = initialize_embedding_model(embedding_model_name)
 vector_store = create_vector_store(documents, embedding_model)
 
-# Initialize the local LLM
 model, tokenizer = initialize_local_llm(
     local_model_path,
     max_seq_length=max_seq_length,
@@ -115,6 +109,7 @@ print("초기화 완료")
 ###########################
 ######### FastAPI #########
 ###########################
+
 class MessageRequest(BaseModel):
     message: str
 
@@ -122,17 +117,13 @@ class MessageRequest(BaseModel):
 class MessageResponse(BaseModel):
     reply: str
 
-
 @app.post("/generate", response_model=MessageResponse)
 async def generate_text(request: MessageRequest):
-    # 1. Retrieve relevant context from vector store
     relevant_docs = vector_store.similarity_search(request.message, k=5)
     context = ' '.join([doc.page_content for doc in relevant_docs])
 
-    # 2. Generate the prompt
     prompt = generate_prompt(context, request.message, conversation_history)
 
-    # 3. Tokenize input and generate response
     inputs = tokenizer([prompt], return_tensors="pt").to("cuda")
 
     outputs = model.generate(
@@ -145,7 +136,6 @@ async def generate_text(request: MessageRequest):
         temperature=1.2,
     )
 
-    # 4. Decode the output
     decoded_outputs = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
     try:
@@ -156,7 +146,6 @@ async def generate_text(request: MessageRequest):
         print(f"Error parsing output: {e}")
         reply = "무카무카가 답을 생성하지 못했어요."
 
-    # 5. Update conversation history
     conversation_history.append(current_dialogue)
 
     print(f"Generated Reply: {reply}")
